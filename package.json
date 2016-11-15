@@ -1,6 +1,6 @@
 {
   "name": "abstract-model",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "It's an abstract model scheme with some usefull automatisations and utilities",
   "main": "index.js",
   "scripts": {
@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/Wh1teRabbitHU/AbstractModel.js/issues"
   },
-  "homepage": "https://github.com/Wh1teRabbitHU/AbstractModel.js#readme"
+  "homepage": "https://github.com/Wh1teRabbitHU/AbstractModel.js#readme",
+  "devDependencies": {
+    "eslint": "^3.10.1"
+  }
 }
