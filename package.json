@@ -1,0 +1,24 @@
+{
+  "name": "abstract-model",
+  "version": "0.0.1",
+  "description": "It's an abstract model scheme with some usefull automatisations and utilities",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wh1teRabbitHU/AbstractModel.js.git"
+  },
+  "keywords": [
+    "abstract",
+    "model",
+    "js"
+  ],
+  "author": "Tamas Ruszka <ruszka.tamas@gmail.com> (https://github.com/Wh1teRabbitHU)",
+  "license": "\tGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Wh1teRabbitHU/AbstractModel.js/issues"
+  },
+  "homepage": "https://github.com/Wh1teRabbitHU/AbstractModel.js#readme"
+}
