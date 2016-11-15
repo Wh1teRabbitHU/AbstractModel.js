@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/Wh1teRabbitHU/AbstractModel.js/issues"
   },
-  "homepage": "https://github.com/Wh1teRabbitHU/AbstractModel.js#readme"
+  "homepage": "https://github.com/Wh1teRabbitHU/AbstractModel.js#readme",
+  "devDependencies": {
+    "eslint": "^3.10.1"
+  }
 }
