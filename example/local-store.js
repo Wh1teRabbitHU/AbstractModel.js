@@ -4,7 +4,9 @@ var model = require('../lib/abstract-model'),
 	Book = require('./models/book'),
 	Store = require('./models/store');
 
-model.init('./example/models');
+model.init({
+	modelRoot: './example/models'
+});
 
 var myBook1 = new Book({
 		title: 'Harry potter',
@@ -32,4 +34,18 @@ var myBook1 = new Book({
 
 console.log(myStore);
 
-module.exports = myStore;
+var rawStoreData = {
+	_class: 'Store',
+	name: 'Only books',
+	owner: 'Small Johanna',
+	books: [ myBook1, myBook3 ]
+};
+
+var anotherStore = model.parse(rawStoreData);
+
+console.log(anotherStore);
+
+module.exports = {
+	myStore: myStore,
+	anotherStore: anotherStore
+};
