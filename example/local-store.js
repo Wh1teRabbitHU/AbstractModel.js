@@ -49,3 +49,11 @@ module.exports = {
 	myStore: myStore,
 	anotherStore: anotherStore
 };
+
+myStore.update({ name: 'Updated title' });
+
+console.log(myStore.values);
+
+myStore.values = { name: 'Overwritten title' };
+
+console.log(myStore.values);
