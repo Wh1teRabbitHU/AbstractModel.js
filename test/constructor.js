@@ -6,6 +6,7 @@ var assert = require('assert'),
 var model                     = require('../lib/abstract-model'),
 	Book                      = require('./models/book'),
 	InitializationException   = require('../lib/exceptions/initialization-exception'),
+	InvalidTypeException      = require('../lib/exceptions/invalid-type-exception'),
 	MissingAttributeException = require('../lib/exceptions/missing-attribute-exception');
 
 var describe = mocha.describe,
@@ -103,7 +104,42 @@ describe('Constructor', function() {
 		}, MissingAttributeException);
 	});
 
-	it('gets all the attributes', function() {
+	it('should throws exception if the given attribute has an unknown type', function() {
+		var attributes = {
+			_class: 'SpecialClass',
+			snowFlakeType: 'IAmSpecial',
+			moreSnowFlakeType: 'ButAlsoInvalid',
+		};
+
+		class SpecialClass extends model.Class {
+			constructor(values) {
+				super(attributes, values);
+			}
+		}
+
+		assert.throws(function() {
+			var specialClass = new SpecialClass(); // eslint-disable-line no-unused-vars
+		}, InvalidTypeException);
+	});
+
+	it('should throws exception if the given custom class cannot be found', function() {
+		var attributes = {
+			_class: 'ShelfClass',
+			bookShelfAttr: 'BookShelf'
+		};
+
+		class ShelfClass extends model.Class {
+			constructor(values) {
+				super(attributes, values);
+			}
+		}
+
+		assert.throws(function() {
+			var shelfClass = new ShelfClass(); // eslint-disable-line no-unused-vars
+		}, InvalidTypeException);
+	});
+
+	it('should get all the attributes', function() {
 		var attributes = {
 			_class: 'Book',
 			title: 'String',

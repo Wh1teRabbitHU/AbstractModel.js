@@ -11,8 +11,6 @@ var describe = mocha.describe,
 	it       = mocha.it,
 	before   = mocha.before;
 
-// Ellenőrizendő: egyszerű típus, object, custom, tömb, key-value, key-object, null, undefined, validValueType
-
 describe('Update', function() {
 	before(function() {
 		model.init({
@@ -69,7 +67,8 @@ describe('Update', function() {
 					title: 'Test object',
 					message: 'Test message'
 				},
-				arrayAttr: [ 'one', 'two', 'three' ]
+				arrayAttr: [ 'one', 'two', 'three' ],
+				bookAttr: new Book()
 			});
 		}, InvalidTypeException);
 	});
@@ -118,22 +117,122 @@ describe('Update', function() {
 		}, InvalidTypeException);
 	});
 
-	it('should throws exception if the given custom class cannot be found', function() {
+	it('should create custom class from simple object', function() {
 		var attributes = {
-			_class: 'ShelfClass',
-			bookShelfAttr: 'BookShelf'
-		};
+				_class: 'OtherBookClass',
+				bookAttr: 'Book'
+			},
+			bookValues = {
+				title: 'Title',
+				author: 'Author',
+				tags: [ 'tag1', 'tag2', 'tag3' ],
+				pages: 366
+			};
 
-		class ShelfClass extends model.Class {
+		class OtherBookClass extends model.Class {
 			constructor(values) {
 				super(attributes, values);
 			}
 		}
 
-		assert.throws(function() {
-			var shelfClass = new ShelfClass();
+		var otherBookClass = new OtherBookClass();
 
-			shelfClass.update({ bookShelfAttr: {} });
+		assert.doesNotThrow(function() {
+			otherBookClass.update({ bookAttr: bookValues });
 		}, InvalidTypeException);
+
+		assert.deepEqual(typeof otherBookClass.bookAttr, typeof new Book());
+
+		Object.keys(bookValues).forEach(function(key) {
+			assert.deepEqual(bookValues[key], otherBookClass.bookAttr[key]);
+		});
 	});
+
+	it('should initialize an array attribute if its recently initialized', function() {
+		var book = new Book(),
+			tagArray = [ 'tag1', 'tag2', 'tag3' ];
+
+		book.update({ tags: tagArray });
+
+		assert.deepEqual(book.tags, tagArray);
+
+		book.update({ tags: null });
+
+		assert.deepEqual(book.tags, []);
+	});
+
+	it('should create two equal custom object if they have the same values', function() {
+		var attributes = {
+				_class: 'ComplexBookClass',
+				otherBooks: 'Book[]'
+			},
+			bookValues = {
+				title: 'Title',
+				author: 'Author',
+				tags: [ 'tag1', 'tag2', 'tag3' ],
+				pages: 366
+			},
+			complexBookValues = {
+				otherBooks: [ bookValues, new Book(bookValues) ]
+			};
+
+		class ComplexBookClass extends model.Class {
+			constructor(values) {
+				super(attributes, values);
+			}
+		}
+
+		var complexBookClass = new ComplexBookClass();
+
+		complexBookClass.update(complexBookValues);
+
+		assert.deepEqual(complexBookClass.otherBooks[0], complexBookClass.otherBooks[1]);
+	});
+
+	it('should initialize attributes if their types defined with an Object, not a string', function() {
+		var attributes = {
+				_class: 'ComplexBookClass',
+				title: {
+					type: 'String'
+				},
+				author: {
+					type: 'String'
+				},
+				tags: {
+					type: 'String[]'
+				},
+				pages: {
+					type: 'Number'
+				},
+				otherBooks: {
+					type: 'Book[]'
+				}
+			},
+			bookValues = {
+				title: 'Title',
+				author: 'Author',
+				tags: [ 'tag1', 'tag2', 'tag3' ],
+				pages: 366
+			},
+			complexBookValues = {
+				title: 'Title',
+				author: 'Author',
+				tags: [ 'tag1', 'tag2', 'tag3' ],
+				pages: 366,
+				otherBooks: [ bookValues, new Book(bookValues) ]
+			};
+
+		class ComplexBookClass extends model.Class {
+			constructor(values) {
+				super(attributes, values);
+			}
+		}
+
+		assert.doesNotThrow(function() {
+			var complexBookClass = new ComplexBookClass();
+
+			complexBookClass.update(complexBookValues);
+		});
+	});
+
 });
