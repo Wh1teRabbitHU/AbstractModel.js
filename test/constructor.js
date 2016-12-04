@@ -77,6 +77,32 @@ describe('Constructor', function() {
 		}, MissingAttributeException);
 	});
 
+	it('throws exception if predefined attributes are missing or null', function() {
+		assert.throws(function() {
+			var attributes;
+
+			class AnotherBook extends model.Class {
+				constructor(values) {
+					super(attributes, values);
+				}
+			}
+
+			var anotherBook = new AnotherBook(); // eslint-disable-line no-unused-vars
+		}, MissingAttributeException);
+
+		assert.throws(function() {
+			var attributes = null;
+
+			class AnotherBook extends model.Class {
+				constructor(values) {
+					super(attributes, values);
+				}
+			}
+
+			var anotherBook = new AnotherBook(); // eslint-disable-line no-unused-vars
+		}, MissingAttributeException);
+	});
+
 	it('gets all the attributes', function() {
 		var attributes = {
 			_class: 'Book',
