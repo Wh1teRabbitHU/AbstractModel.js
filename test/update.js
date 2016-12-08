@@ -39,6 +39,44 @@ describe('Update', function() {
 		});
 	});
 
+	it('should only set the attributes that initialized in the class', function() {
+		var book = new Book(),
+			values = {
+				title: 'I am a title',
+				weight: 'Hey, what are you doing...!',
+				pages: 455,
+				childrens: [ 'I', 'am', 'a', 'foreign', 'attribute' ]
+			};
+
+		book.update(values);
+
+		assert.equal(book.title, values.title);
+		assert.equal(typeof book.weight, 'undefined');
+		assert.deepEqual(typeof book.childrens, 'undefined');
+	});
+
+	it('should only update the class with the given values', function() {
+		var book = new Book(),
+			valuesA = {
+				title: 'I am a title',
+				author: 'Test author',
+				tags: [ 'test_tag1', 'test_tag2' ],
+				pages: 455
+			},
+			valuesB = {
+				title: 'I am also a title',
+				tags: [ 'test_tag3', 'test_tag4' ]
+			};
+
+		book.update(valuesA);
+		book.update(valuesB);
+
+		assert.equal(book.title, valuesB.title);
+		assert.equal(book.author, valuesA.author);
+		assert.deepEqual(book.tags, valuesB.tags);
+		assert.equal(book.pages, valuesA.pages);
+	});
+
 	it('should handle all value types', function() {
 		var attributes = {
 			_class: 'PrimitiveOnly',

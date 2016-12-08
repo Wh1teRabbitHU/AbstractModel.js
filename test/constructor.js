@@ -46,7 +46,7 @@ describe('Constructor', function() {
 		});
 	});
 
-	it('initialize the class with the given values', function() {
+	it('should initialize the class with the given values', function() {
 		var values = {
 				title: 'Test book',
 				author: 'Test author',
@@ -59,7 +59,7 @@ describe('Constructor', function() {
 		});
 	});
 
-	it('throws exception if \'_class\' attribute is missing', function() {
+	it('should throws exception if \'_class\' attribute is missing', function() {
 		assert.throws(function() {
 			var attributes = {
 				title: 'String',
@@ -78,7 +78,7 @@ describe('Constructor', function() {
 		}, MissingAttributeException);
 	});
 
-	it('throws exception if predefined attributes are missing or null', function() {
+	it('should throws exception if predefined attributes are missing or null', function() {
 		assert.throws(function() {
 			var attributes;
 
