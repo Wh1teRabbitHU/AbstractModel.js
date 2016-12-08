@@ -3,7 +3,6 @@
 var model = require('../../lib/abstract-model');
 
 const attributes = {
-	_class: 'Store',
 	name: 'String',
 	owner: 'String',
 	books: 'Book[]'

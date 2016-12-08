@@ -59,25 +59,6 @@ describe('Constructor', function() {
 		});
 	});
 
-	it('should throws exception if \'_class\' attribute is missing', function() {
-		assert.throws(function() {
-			var attributes = {
-				title: 'String',
-				author: 'String',
-				tags: 'String[]',
-				pages: 'Number'
-			};
-
-			class AnotherBook extends model.Class {
-				constructor(values) {
-					super(attributes, values);
-				}
-			}
-
-			var anotherBook = new AnotherBook(attributes); // eslint-disable-line no-unused-vars
-		}, MissingAttributeException);
-	});
-
 	it('should throws exception if predefined attributes are missing or null', function() {
 		assert.throws(function() {
 			var attributes;
@@ -106,7 +87,6 @@ describe('Constructor', function() {
 
 	it('should throws exception if the given attribute has an unknown type', function() {
 		var attributes = {
-			_class: 'SpecialClass',
 			snowFlakeType: 'IAmSpecial',
 			moreSnowFlakeType: 'ButAlsoInvalid',
 		};
@@ -124,7 +104,6 @@ describe('Constructor', function() {
 
 	it('should throws exception if the given custom class cannot be found', function() {
 		var attributes = {
-			_class: 'ShelfClass',
 			bookShelfAttr: 'BookShelf'
 		};
 
@@ -141,7 +120,6 @@ describe('Constructor', function() {
 
 	it('should get all the attributes', function() {
 		var attributes = {
-			_class: 'Book',
 			title: 'String',
 			author: 'String',
 			tags: 'String[]',

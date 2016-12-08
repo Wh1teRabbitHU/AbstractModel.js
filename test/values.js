@@ -3,8 +3,8 @@
 var assert = require('assert'),
 	mocha  = require('mocha');
 
-var model                = require('../lib/abstract-model'),
-	Book                 = require('./models/book');
+var model = require('../lib/abstract-model'),
+	Book  = require('./models/book');
 
 var describe = mocha.describe,
 	it       = mocha.it,

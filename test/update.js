@@ -79,7 +79,6 @@ describe('Update', function() {
 
 	it('should handle all value types', function() {
 		var attributes = {
-			_class: 'PrimitiveOnly',
 			stringAttr: 'String',
 			numberAttr: 'Number',
 			booleanAttr: 'Boolean',
@@ -113,7 +112,6 @@ describe('Update', function() {
 
 	it('should throws exception if the given value has wrong type', function() {
 		var attributes = {
-			_class: 'PrimitiveOnly',
 			stringAttr: 'String',
 			numberAttr: 'Number',
 			booleanAttr: 'Boolean',
@@ -157,7 +155,6 @@ describe('Update', function() {
 
 	it('should create custom class from simple object', function() {
 		var attributes = {
-				_class: 'OtherBookClass',
 				bookAttr: 'Book'
 			},
 			bookValues = {
@@ -201,7 +198,6 @@ describe('Update', function() {
 
 	it('should create two equal custom object if they have the same values', function() {
 		var attributes = {
-				_class: 'ComplexBookClass',
 				otherBooks: 'Book[]'
 			},
 			bookValues = {
@@ -229,7 +225,6 @@ describe('Update', function() {
 
 	it('should initialize attributes if their types defined with an Object, not a string', function() {
 		var attributes = {
-				_class: 'ComplexBookClass',
 				title: {
 					type: 'String'
 				},
