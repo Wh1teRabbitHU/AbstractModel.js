@@ -1,5 +1,3 @@
 'use strict';
 
-var model = require('./lib/abstract-model');
-
-module.exports = model;
+module.exports = require('./lib/abstract-model');
