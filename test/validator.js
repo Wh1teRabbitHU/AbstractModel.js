@@ -13,8 +13,6 @@ var describe   = mocha.describe,
 
 var attributes;
 
-// TODO: Check the exception messages/ids
-
 describe('Validator', function() {
 	before(function() {
 		model.init({
