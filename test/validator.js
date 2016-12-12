@@ -45,22 +45,6 @@ describe('Validator', function() {
 		};
 	});
 
-	it('should run the \'none\' validation without any exeption', function() {
-		let values = {
-				title: 'Test title',
-				author: 'Test author',
-				tags: [ 'one', 'two', 'three' ],
-				pages: 366
-			},
-			book = new Book();
-
-		book.update(values);
-
-		assert.doesNotThrow(function() {
-			book.validate();
-		}, ValidationException);
-	});
-
 	it('should run the \'normal\' validation without any exeption', function() {
 		let values = {
 				title: 'Test title',
@@ -78,12 +62,9 @@ describe('Validator', function() {
 			errorObj = book.validate('normal');
 		}, ValidationException);
 
-		assert.deepEqual(errorObj, {
-			title: [],
-			author: [],
-			pages: [],
-			tags: []
-		});
+		assert.deepEqual(errorObj, {});
+
+		assert.equal(book.hasErrors, false);
 	});
 
 	it('should run the \'strict\' validation without any exeption', function() {
@@ -100,29 +81,8 @@ describe('Validator', function() {
 		assert.doesNotThrow(function() {
 			book.validate('strict');
 		}, ValidationException);
-	});
 
-	it('should not throws exception if in the \'none\' mode if the validation failed', function() {
-		let newValues = {
-			title: 'Test title, longer than it should be',
-			author: 'I am an author',
-			tags: [],
-			pages: 55
-		};
-
-		class OtherBookClass extends model.Class {
-			constructor(values) {
-				super(attributes, values);
-			}
-		}
-
-		var otherBook = new OtherBookClass();
-
-		otherBook.update(newValues);
-
-		assert.doesNotThrow(function() {
-			otherBook.validate();
-		}, ValidationException);
+		assert.equal(book.hasErrors, false);
 	});
 
 	it('should return with error object if something failed during the validation and in the \'normal\' mode', function() {
@@ -150,11 +110,10 @@ describe('Validator', function() {
 		}, ValidationException);
 
 		assert.deepEqual(errorObj, {
-			title: [ 'length' ],
-			author: [],
-			tags: [],
-			pages: []
+			title: [ 'length' ]
 		});
+
+		assert.equal(otherBook.hasErrors, true);
 	});
 
 	it('should throws exception if something failed during the validation and in the \'strict\' mode', function() {
@@ -178,6 +137,8 @@ describe('Validator', function() {
 		assert.throws(function() {
 			otherBook.validate('strict');
 		}, ValidationException);
+
+		assert.equal(otherBook.hasErrors, true);
 	});
 
 	it('should notice if the \'min\' validation failed', function() {
@@ -205,11 +166,10 @@ describe('Validator', function() {
 		var errorObj = otherBook.validate('normal');
 
 		assert.deepEqual(errorObj, {
-			title: [],
-			author: [],
-			tags: [],
 			pages: [ 'min' ]
 		});
+
+		assert.equal(otherBook.hasErrors, true);
 	});
 
 	it('should notice if the \'max\' validation failed', function() {
@@ -237,11 +197,10 @@ describe('Validator', function() {
 		var errorObj = otherBook.validate('normal');
 
 		assert.deepEqual(errorObj, {
-			title: [],
-			author: [],
-			tags: [],
 			pages: [ 'max' ]
 		});
+
+		assert.equal(otherBook.hasErrors, true);
 	});
 
 	it('should notice if the \'length\' validation failed', function() {
@@ -270,19 +229,13 @@ describe('Validator', function() {
 
 		assert.deepEqual(errorObj, {
 			title: [ 'length' ],
-			author: [ 'length' ],
-			tags: [],
-			pages: []
+			author: [ 'length' ]
 		});
+
+		assert.equal(otherBook.hasErrors, true);
 	});
 
 	it('should notice if the \'required\' validation failed', function() {
-		let newValues = {
-			title: 'Test',
-			author: 'I am an author',
-			pages: 42
-		};
-
 		class OtherBookClass extends model.Class {
 			constructor(values) {
 				super(attributes, values);
@@ -291,8 +244,6 @@ describe('Validator', function() {
 
 		var otherBook = new OtherBookClass();
 
-		otherBook.update(newValues);
-
 		assert.throws(function() {
 			otherBook.validate('strict');
 		}, ValidationException);
@@ -300,10 +251,12 @@ describe('Validator', function() {
 		var errorObj = otherBook.validate('normal');
 
 		assert.deepEqual(errorObj, {
-			title: [],
-			author: [],
+			title: [ 'required' ],
+			author: [ 'required' ],
 			tags: [ 'required' ],
-			pages: []
+			pages: [ 'required' ]
 		});
+
+		assert.equal(otherBook.hasErrors, true);
 	});
 });
