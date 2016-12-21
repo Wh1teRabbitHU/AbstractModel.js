@@ -1,22 +1,46 @@
 # AbstractModel.js
 
-## Description
+## Bookmarks
 
-It's an abstract model class with some basic functionality and validation tools. You can predefine all the attributes your class will ever use and the update function will take care of the rest. If your data structure needs validation, you can easily predefine some simple rules, too. Also you can parse any json objects and create an extended class instance with the module's parse function. Thanks to that you get an easy way to handle the client-server communications and data transfers. After you sent or received your data, you call the parser and it returns the class with all the functions, attributes and validators that you created.
+- [Description](#description)
+- [Installation](#installation)
+- [Usage](#usage)
+	- [Initialization](#initialization)
+	- [Attributes](#attributes)
+	- [Create a class](#create-a-class)
+	- [Parsing json Object](#parsing-json-object)
+	- [Validation](#validation)
+- [Methods](#methods)
+	- [Constructor](#constructor)
+	- [class.update(values)](#class-update)
+	- [class.values](#class-values)
+	- [class.equals(otherClass)](#class-equals)
+	- [class.validate(validationMode)](#class-validate)
+	- [class.hasErrors()](#class-haserrors)
+- [Working example](#working-example)
 
-## Installation
+## <a id="description"></a> Description
 
-```
+It's an abstract model class with some basic functionality and validation tools. You can predefine all the attributes your class will ever use and the update function will take care of the rest. If your data structure needs validation, you can easily predefine some simple rules, too. Also you can parse any json objects and create an extended class instance with the module's parse function. Thanks to that you get an easy way to handle client-server communications and data transfers. After you sent or received your data, you call the parser and it returns the class with all the functions, attributes and validators.
+
+## <a id="installation"></a> Installation
+
+You can simply install it via npm or clone from GitHub. In this case you should require the ./index.js or the ./lib/abstract-model.js file to use the module.
+
+```bash
+# Install via npm
 npm install abstract-model --save
+
+# Clone from Github
+cd path/to/target/folder
+git clone https://github.com/Wh1teRabbitHU/AbstractModel.js.git
 ```
 
-## Usage
+## <a id="usage"></a> Usage
 
-### Initialization
+### <a id="initialization"></a> Initialization
 
 Before you do anything with your classes, you must initialize the abstract-model module:
-
-#### Syntax:
 
 ```javascript
 var model = require('abstract-model');
@@ -32,10 +56,10 @@ model.init(OPTIONS);
 
 | Name | Type | Required? | Default | Description |
 | ---- | ---- | --------- | ------- | ----------- |
-| modelRoot | String | true | - | Path to your models. This attribute tells the class that where to find your models. After the initialization, if you pass a json object with a '_class' attribute to the parser, then it'll automaticly create the target class instance and update with the given values. If your model classes are separately structured, you also have to concat the subfolder's path to this attribute. |
-| validatonMode | String | false | 'normal' | It define, how the validator handle the errors. There are two available values: 'normal', 'strict'. If the validator is in the 'strict' mode, the update function will throw error right after it set all the given values. In normal mode it do nothing, only if you retrieve the errors object ('_errors') or manualy validate the class |
+| modelRoot | String | true | - | Path to your models. This attribute tells the class that where to find your model files. After the initialization, if you pass a json object to the parser with a '_class' attribute, then it'll automaticly create the target class instance and update with the given values. If your model classes are separately structured, you also have to concat the subfolder's path to this attribute. |
+| validatonMode | String | false | 'normal' | It define, how the validator handle the errors. There are two available values: 'normal', 'strict'. If the validator is in the 'strict' mode, the update function will throws exception if found an error. In normal mode it'll only fill the errors object, so you have to retrieve it ('_errors') or manualy validate the class later |
 
-Example folder structure for this scenario:
+Example folder structure:
 
 | Model path | '_class' value |
 | ---------- | -------------- |
@@ -46,11 +70,9 @@ Example folder structure for this scenario:
 | ./models/account/bill.js | 'account/bill' |
 | ./models/message.js | 'message' |
 
-### Attributes
+### <a id="attributes"></a> Attributes
 
-#### Attribute types
-
-The following attribute types are available:
+The following types are available:
 
 - String
 - Number
@@ -68,10 +90,9 @@ You can use arrays as attributes, too. The syntax is the same, but with an '[]' 
 
 #### How to define the attributes?
 
-When you create a new class, you have to give the attributes to its super constructor. This is an Object type variable, and the keys are your attribute names. The value can be a String and it will be the type of your attribute or if you need some validator then Object. In this case, the type will be an attribute named to 'type' (suprise).
-Examples:
+When you create a new class, you have to give the attributes to its super constructor. This is an Object type variable, and the keys are your attribute names. The value can be String (and it will be the type name of the attribute) or if you need some validation rules then Object. In this case, the type will be an attribute named to 'type'.
 
-#### Syntax:
+Examples:
 
 ```javascript
 const CLASS_ATTRIBUTE = {
@@ -86,19 +107,17 @@ const CLASS_ATTRIBUTE = {
 
 #### Inner attributes
 
-The module has some inner attributes. You cannot change them manualy for security and reliability reasons. Every inner attribute starts with an underscore.
+The abstract class has a few inner attributes. You shouldn't change them manualy for security and reliability reasons. Every inner attribute starts with an underscore.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| _class | String | The class own name and/or path to the declaration |
-| _attributes | Object | After you create a class it will contains all the predefined attributes. |
-| _errors | Object | It contains those attributes that failed during the validation process. Every key is an attribute name and the value pair is array with the errors |
+| _class | String | The class's own name and/or path to the declaration. By default it's the class's name. If you try to parse a simple Object or just give a different name/path, then you have to give it with the predefined attributes |
+| _attributes | Object | After you create a class it will contains all the predefined attributes. Inner attributes are excluded. |
+| _errors | Object | It contains those attributes that failed during the validation process. Every key is an attribute name and the value pair is an array with the errors. |
 
-### Create a class
+### <a id="create-a-class"></a> Create a class
 
 To extend and use your class, you won't need any special thing. In the constructor you have to pass the class attributes and the initializer values.
-
-#### Syntax:
 
 ```javascript
 var model = require('abstract-model');
@@ -121,14 +140,14 @@ class AllTypeClass extends model.Class {
 }
 ```
 
-And thats all, you can use it now! Pass any object to the constructor (or the update function in any existing class instance) and it will only update the predefined attributes. If you have like 10 attributes, but your class defined with one 'title', then the update function only set the 'title', if its present in the values object, and leave the rest. But beware, if one of the values has different type than the one in the class with the same name, then it will throw an InvalidTypeException right after you try to update your class. There is only two exceptions:
+And thats all, you can use it now! Pass any object to the constructor (or the update function in any existing class instance) and it will only update the predefined attributes. If the value's object have like 10 attributes, but your class defined with one 'title', then the update function only set the 'title' (if its present) and leave the rest. But beware, if one of the values has different type than it initialized in the class, then it will throw an InvalidTypeException while you try to update your values. There is only two exceptions:
 
 - If the value is null
-- Or its a single item, but you defined an array, then it will be added to an empty array and set for your class.
+- Or its a single item, but you defined an array, then it will be added to an empty array and set to your class.
 
-### Parsing json object
+### <a id="parsing-json-object"></a> Parsing json object
 
-The module has a parser function, too. You can parse any object into an already defined class. The given object has to have a '_class' attribute to identify the target class. If its missing or the class cannot be located, the parser throws an error.
+The module has a parser function, too. You can parse any object to an already defined class. The given object has to have a '_class' attribute to identify the target class. If its missing or the class cannot be located, the parser throws an error.
 
 #### Example
 
@@ -152,23 +171,25 @@ var book = model.parse(bookValues),
 console.log(book.equals(book2)); // true
 ```
 
-## Validation
+### <a id="validation"></a> Validation
 
-Every time the class's values are changed, the validate function will run. It has two mode: 'normal' (this is the default) and 'strict'. In 'normal' mode, all the attributes are checked and an Object returned with all the validation errors. In 'strict' mode if the validator find an error, it throws an error and the function stops. The validation rules are defined in the attributes definitons, so after you create the class, it cannot be changed. The following rules are available:
+Every time the class's values are changed, the validate function will run. It has two mode: 'normal' (this is the default) and 'strict'. In 'normal' mode, all the attributes are checked and an Object type variable returns with all the validation errors. In 'strict' mode if the validator find an error, it throws an exception and the validate function stops. The validation rules are defined in the attribute's definitons, so after you create the class, it cannot be changed.
+
+The following rules are available:
 
 | Name | Types | Description |
 | ---- | ----- | ----------- |
-| min | Number | It check if the given min number is smaller than the attribute's value. It's inclusive, so it only throws error if the value is smaller. |
-| max | Number | It check if the given max number is larger than the attribute's value. It's inclusive, so it only throws error if the value is larger. |
-| length | String | It check if the given length is larger than the attribute's length. It's inclusive, so it only throws error if the value is longer. |
-| required | All | It check if the attribute is given. It throws error if the value is null or undefined|
+| min | Number | Checking if the given min number is smaller than the attribute's value. It's inclusive, so it only throws error if the value is smaller. |
+| max | Number | Checking if the given max number is larger than the attribute's value. It's inclusive, so it only throws error if the value is larger. |
+| length | String | Checking if the given length is larger than the attribute's length. It's inclusive, so it only throws error if the string is longer. |
+| required | All | Checking if the attribute is given. It throws error if the value is null or undefined |
 
-## Methods
+## <a id="methods"></a> Methods
 
-### Constructor
+### <a id="constructor"></a> Constructor
 
 What's the constructor's job?
-It sets your predefined attributes to the class, initialize the given values (if nothing is added, then skip this part) and validate them. If the validator is in the 'strict' mode and find some inconsistence, it throws an error. (Its all after the update, so it sets your values anyway)
+It sets your predefined attributes to the class, initialize with the given values (if nothing is added, then skipping this part) and validate them. If the validator is in the 'strict' mode and find some inconsistence, it throws an error. (Runs after the update function, so it sets your values anyway)
 
 ```javascript
 var model = require('abstract-model'),
@@ -188,9 +209,9 @@ var book2 = new Book({
 });
 ```
 
-### class.update(values)
+### <a id="class-update"></a> class.update(values)
 
-It updates the class with the given values. It'll skip those attributes that not represented in the class. If one of the values has a different type than the class's predefined attribute then it will throw an error. The update function automatically validate the new values. In 'strict' mode if the validation fails, the function throws an error.
+This function updates the class with the given values. It'll skip those attributes that not represented in the class. If one of the values has a different type than the class's predefined attribute has, then it throws an exception. The update function automatically validate the new values after all values are set. In 'strict' mode if one of the validation fails, it throws an exception.
 
 #### Example
 
@@ -210,9 +231,9 @@ book.update({
 });
 ```
 
-### class.values
+### <a id="class-values"></a> class.values
 
-Every class has a values attribute with both getter and setter. When you retreive your values, it only returns the predefined attributes without the inner ones. If an attribute has no value, then it still included in the returned object, but it will be 'undefined'. If you set the values it will overwrite all the previous attributes. If the given object has more attribute than the class have, the code ignore those. The only different between the update function and this setter is if you use the setter it will change all the values, not just the given ones.
+Every class has a values attribute with both getter and setter. When you retreive your values, it only returns the predefined attributes without the inner ones. If an attribute has no value, then it still included in the returned object as 'undefined'. If the given object has more attributes than the class has, the setter ignore those are missing from the class. The only different between the update function and this is if you use the setter it will change all the previous values, not just the new ones.
 
 #### Getter example
 
@@ -275,9 +296,9 @@ book.values = {
 console.log(book.values);
 ```
 
-### class.equals(otherClass)
+### <a id="class-equals"></a> class.equals(otherClass)
 
-It's determine if a class is equals to the b class. The class name/path, the given attributes and all the values recursively has to be the same to return true. If one of the attributes is an array, then it will sort in both class, so the order doesn't matter.
+It's checking if your class is equals to the other class. The class name/path, the given attributes and all the values recursively has to be the same to return true. If one of the attributes is an array, then it will sort in both class, so the order doesn't matter in the result.
 
 #### Example
 
@@ -301,9 +322,9 @@ var book = new Book(bookValues),
 console.log(book.equals(book2)); // true
 ```
 
-### class.validate(validationMode)
+### <a id="class-validate"></a> class.validate(validationMode)
 
-It's the validation function. It runs automaticaly right after the constructor, update and values setter functions. It returns the error object. If everything is fine, this object is empty. The validate function has an argument, that changes the validator mode temporaly. (It's a good practice that if you init your class with normal mode, and you run the validator in strict mode whenever you needed it) For the details, check the 'Validation' part of this readme.
+It's the validation function. It runs automaticaly right after the constructor, update and 'values' setter functions. It returns an object with all the found errors. If everything is fine, this object is empty. The validate function has an argument, that changes the validator's mode temporarily. (It's a good practice that if you init your class with normal mode, and you run the validator in strict mode whenever you need it) For the details, check the ['Validation'](#validation) part.
 
 #### Example
 
@@ -328,9 +349,9 @@ try {
 }
 ```
 
-### class.hasErrors()
+### <a id="class-haserrors"></a> class.hasErrors()
 
-It check if the class's values has any errors. It returns true, if one or more errors occured. It always run a validate() function in 'normal' mode for the check, so it won't throws exceptions.
+Checking if the class's values has any errors. Returns true, if one or more errors occured. It always run the validate() function in 'normal' mode, so it won't throws any exceptions.
 
 #### Example
 
@@ -351,6 +372,6 @@ var book = new Book({
 console.log(book.hasErrors()); // false
 ```
 
-## Working example:
+## <a id="working-example"></a> Working example:
 
-Check local-store.js under the example folder.
+Check local-store.js under the example folder. Later I'll make an interactive page to play with the data.
