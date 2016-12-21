@@ -183,7 +183,8 @@ The following rules are available:
 | max | Number | Checking if the given max number is larger than the attribute's value. It's inclusive, so it only throws error if the value is larger. |
 | length | String | Checking if the given length is larger than the attribute's length. It's inclusive, so it only throws error if the string is longer. |
 | required | All | Checking if the attribute is given. It throws error if the value is null or undefined |
-| values | Number, String | Checking if the value can be found in the values array. (Only if the value is not null or undefined) The 'values' rule's value must be an array or it'll throws an Exception |
+| values | Number, String | Checking if the value can be found in the values array. The 'values' rule's value must be an array or it'll throws an Exception |
+| regexp | String | Checking if the value is matching with the given regular expression. (Using the [RegExp](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp) object) The given patter will be passed as an argument to the RegExp global object's constructor |
 
 ## <a id="methods"></a> Methods
 
