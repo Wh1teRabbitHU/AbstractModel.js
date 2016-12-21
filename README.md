@@ -185,6 +185,7 @@ The following rules are available:
 | required | All | Checking if the attribute is given. It throws error if the value is null or undefined |
 | values | Number, String | Checking if the value can be found in the values array. The 'values' rule's value must be an array or it'll throws an Exception |
 | regexp | String | Checking if the value is matching with the given regular expression. (Using the [RegExp](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp) object) The given patter will be passed as an argument to the RegExp global object's constructor |
+| custom | All | Checking if the value is passing the predefined custom validator function. It has one input parameter, the attribute's value and it must return with the validation result (Boolean) |
 
 ## <a id="methods"></a> Methods
 
