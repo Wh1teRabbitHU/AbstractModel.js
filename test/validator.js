@@ -39,6 +39,20 @@ describe('Validator', function() {
 				min: 10,
 				max: 100,
 				required: true
+			},
+			genre: {
+				type: 'String',
+				values: [ 'sci-fi', 'action', 'noir' ]
+			},
+			catalogNumber: {
+				type: 'String',
+				regexp: /[A-Z]{3}[0-9]{6}/
+			},
+			isTooLongToRead: {
+				type: 'Boolean',
+				custom: function(value) {
+					return value;
+				}
 			}
 		};
 	});
@@ -48,7 +62,10 @@ describe('Validator', function() {
 				title: 'Test title',
 				author: 'Test author',
 				tags: [ 'one', 'two', 'three' ],
-				pages: 366
+				pages: 366,
+				genre: 'action',
+				catalogNumber: 'BBC123456',
+				isTooLongToRead: true
 			},
 			book = new Book();
 
@@ -70,7 +87,10 @@ describe('Validator', function() {
 				title: 'Test title',
 				author: 'Test author',
 				tags: [ 'one', 'two', 'three' ],
-				pages: 366
+				pages: 366,
+				genre: 'action',
+				catalogNumber: 'BBC123456',
+				isTooLongToRead: true
 			},
 			book = new Book();
 
@@ -88,7 +108,10 @@ describe('Validator', function() {
 			title: 'Test title, longer than it should be',
 			author: 'I am an author',
 			tags: [],
-			pages: 55
+			pages: 55,
+			genre: 'action',
+			catalogNumber: 'BBC123456',
+			isTooLongToRead: true
 		};
 
 		class OtherBookClass extends model.Class {
@@ -119,7 +142,10 @@ describe('Validator', function() {
 			title: 'Test title, longer than it should be',
 			author: 'I am an author',
 			tags: [],
-			pages: 55
+			pages: 55,
+			genre: 'action',
+			catalogNumber: 'BBC123456',
+			isTooLongToRead: true
 		};
 
 		class OtherBookClass extends model.Class {
@@ -144,7 +170,10 @@ describe('Validator', function() {
 			title: 'Test',
 			author: 'I am an author',
 			tags: [],
-			pages: 9
+			pages: 9,
+			genre: 'action',
+			catalogNumber: 'BBC123456',
+			isTooLongToRead: true
 		};
 
 		class OtherBookClass extends model.Class {
@@ -175,7 +204,10 @@ describe('Validator', function() {
 			title: 'Test',
 			author: 'I am an author',
 			tags: [],
-			pages: 101
+			pages: 101,
+			genre: 'action',
+			catalogNumber: 'BBC123456',
+			isTooLongToRead: true
 		};
 
 		class OtherBookClass extends model.Class {
@@ -206,7 +238,10 @@ describe('Validator', function() {
 			title: 'Test001',
 			author: 'I am an author, a very long named author',
 			tags: [],
-			pages: 42
+			pages: 42,
+			genre: 'action',
+			catalogNumber: 'BBC123456',
+			isTooLongToRead: true
 		};
 
 		class OtherBookClass extends model.Class {
@@ -253,6 +288,108 @@ describe('Validator', function() {
 			author: [ 'required' ],
 			tags: [ 'required' ],
 			pages: [ 'required' ]
+		});
+
+		assert.equal(otherBook.hasErrors, true);
+	});
+
+	it('should notice if the \'values\' validation failed', function() {
+		let newValues = {
+			title: 'Test',
+			author: 'I am an author',
+			tags: [],
+			pages: 42,
+			genre: 'not-action',
+			catalogNumber: 'BBC123456',
+			isTooLongToRead: true
+		};
+
+		class OtherBookClass extends model.Class {
+			constructor(values) {
+				super(attributes, values);
+			}
+		}
+
+		var otherBook = new OtherBookClass();
+
+		otherBook.update(newValues);
+
+		assert.throws(function() {
+			otherBook.validate('strict');
+		}, ValidationException);
+
+		var errorObj = otherBook.validate('normal');
+
+		assert.deepEqual(errorObj, {
+			genre: [ 'values' ]
+		});
+
+		assert.equal(otherBook.hasErrors, true);
+	});
+
+	it('should notice if the \'regexp\' validation failed', function() {
+		let newValues = {
+			title: 'Test',
+			author: 'I am an author',
+			tags: [],
+			pages: 42,
+			genre: 'action',
+			catalogNumber: 'BB1234567',
+			isTooLongToRead: true
+		};
+
+		class OtherBookClass extends model.Class {
+			constructor(values) {
+				super(attributes, values);
+			}
+		}
+
+		var otherBook = new OtherBookClass();
+
+		otherBook.update(newValues);
+
+		assert.throws(function() {
+			otherBook.validate('strict');
+		}, ValidationException);
+
+		var errorObj = otherBook.validate('normal');
+
+		assert.deepEqual(errorObj, {
+			catalogNumber: [ 'regexp' ]
+		});
+
+		assert.equal(otherBook.hasErrors, true);
+	});
+
+	it('should notice if the \'custom\' validation failed', function() {
+		let newValues = {
+			title: 'Test',
+			author: 'I am an author',
+			tags: [],
+			pages: 67,
+			genre: 'action',
+			catalogNumber: 'BBC123456',
+			isTooLongToRead: false
+		};
+
+		class OtherBookClass extends model.Class {
+			constructor(values) {
+				super(attributes, values);
+			}
+		}
+
+		var otherBook = new OtherBookClass();
+
+		otherBook.update(newValues);
+
+		assert.throws(function() {
+			otherBook.validate('strict');
+		}, ValidationException);
+
+		var errorObj = otherBook.validate('normal');
+
+		assert.deepEqual(errorObj, {
+			isTooLongToRead: [ 'custom' ]
 		});
 
 		assert.equal(otherBook.hasErrors, true);
