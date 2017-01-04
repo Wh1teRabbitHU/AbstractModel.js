@@ -59,6 +59,18 @@ describe('Constructor', function() {
 		});
 	});
 
+	it('should use the given \'_class\' attribute instead of the calculated one', function() {
+		var values = {
+				_class: 'NotABook',
+				title: 'Test book',
+				author: 'Test author',
+				pages: 366
+			},
+			book = new Book(values);
+
+		assert.equal(book._class, values._class);
+	});
+
 	it('should throws exception if predefined attributes are missing or null', function() {
 		assert.throws(function() {
 			var attributes;
