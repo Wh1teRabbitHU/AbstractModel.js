@@ -111,7 +111,7 @@ The abstract class has a few inner attributes. You shouldn't change them manualy
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| _class | String | The class's own name and/or path to the declaration. By default it's the class's name. If you try to parse a simple Object or just give a different name/path, then you have to give it with the predefined attributes |
+| _class | String | The class's own name and/or path to the declaration. By default it's the class's name, but when you try to parse a simple Object or just using a different name/path, then you have to provide it in the values. You can also use this attribute with direct/full path. |
 | _attributes | Object | After you create a class it will contains all the predefined attributes. Inner attributes are excluded. |
 | _errors | Object | It contains those attributes that failed during the validation process. Every key is an attribute name and the value pair is an array with the errors. |
 
