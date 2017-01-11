@@ -1,59 +1,116 @@
 'use strict';
 
-var model = require('../lib/abstract-model'),
-	Book = require('./models/book'),
-	Store = require('./models/store');
+var model       = require('../lib/abstract-model'),
+	Book        = require('./models/book'),
+	Store       = require('./models/store'),
+	StoreKeeper = require('./models/store-keeper');
+
+var books        = require('./data/books'),
+	storeKeepers = require('./data/store-keepers'),
+	stores       = require('./data/stores');
 
 model.init({
-	modelRoot: './example/models'
+	modelRoot: './models'
 });
 
-var myBook1 = new Book({
-		title: 'Harry potter',
-		author: 'J. K. Rowling',
-		tags: [ 'Fantasy', 'Magic' ],
-		pages: 654
-	}),
-	myBook2 = new Book({
-		title: 'Lords of the rings',
-		author: 'J. R. R. Tolkien',
-		tags: [ 'Fantasy', 'Elven', 'Hobbit' ],
-		pages: 454
-	}),
-	myBook3 = new Book({
-		title: '2001 Space odyssey',
-		author: 'Arthur C. Clarke',
-		tags: [ 'Sci-fi', 'Monkeys', 'Space' ],
-		pages: 310
-	}),
-	myStore = new Store({
-		name: 'Books & Albums co.',
-		owner: 'Big Joe',
-		books: [ myBook1, myBook2, myBook3 ]
-	});
+let book1 = new Book(books[0]);
 
-console.log(myStore);
+console.log('\n\nLets see a simple constructor initialized book entity: ');
+console.log(book1);
 
-var rawStoreData = {
-	_class: 'Store',
-	name: 'Only books',
-	owner: 'Small Johanna',
-	books: [ myBook1, myBook3 ]
+book1.update(books[1]);
+
+console.log('\n\nUpdate it with different values: ');
+console.log(book1);
+
+book1.values = books[2];
+
+console.log('\n\nOverwrite all the values: ');
+console.log(book1);
+
+let book2 = model.parse({
+	_class: 'Book',
+	title: 'Dune',
+	author: 'Arthur C. Clarke',
+	release: 1965,
+	tags: [ 'Sci-fi', 'Drama', 'Space' ],
+	pages: 534
+});
+
+console.log('\n\nCreate a book object from simple javascript object. The parser know his job: ');
+console.log(book2);
+
+let store1 = new Store();
+
+console.log(store1);
+
+store1.update(stores[0]);
+
+console.log('\n\nCreate a new store and update with values after the initialization: ');
+console.log(store1);
+
+store1.update({
+	books: [ books[3], books[4], books[5] ]
+});
+
+console.log('\n\nUpdate its book array with three predefined books: ');
+console.log(store1);
+
+let store2 = new Store(stores[1]);
+
+store2.values = {
+	name: 'Newly opened store',
+	books: books,
+	workers: storeKeepers,
+	owner: storeKeepers[0]
 };
 
-var anotherStore = model.parse(rawStoreData);
+console.log('\n\nOverwrite entirely all the values with a new one in another store object: ');
+console.log(store2);
 
-console.log(anotherStore);
+let storeKeeper1 = new StoreKeeper(storeKeepers[1]);
 
-module.exports = {
-	myStore: myStore,
-	anotherStore: anotherStore
+let store = new Store({
+	name: 'Newly opened store',
+	books: [
+		book1,
+		new Book(books[1]),
+		books[2]
+	],
+	workers: [
+		storeKeeper1,
+		storeKeepers[0]
+	],
+	owner: storeKeepers[2]
+});
+
+console.log('\n\nPlay dirty. Mix all value types and initialization methods in a constructor: ');
+console.log(store);
+
+book1.values = {
+	author: 'George Orwell',
+	release: 1949,
+	tags: [ 'Sci-fi', 'Dystopia', 'Drama' ],
+	pages: 701
 };
 
-myStore.update({ name: 'Updated title' });
+console.log('\n\nOh no, Orwell forgot his book\'s title and exceed the maximum page number with one. It must generate an error object like this: ');
+console.log('Errors: ', book1.validate());
 
-console.log(myStore.values);
+let book2Copy = new Book({
+	title: 'Dune',
+	author: 'Arthur C. Clarke',
+	release: 1965,
+	tags: [ 'Sci-fi', 'Drama', 'Space' ],
+	pages: 534
+});
 
-myStore.values = { name: 'Overwritten title' };
+console.log('\n\nLooks like we created an other copy from the book2. We should check it: ');
+console.log('Equals: ' + book2.equals(book2Copy));
 
-console.log(myStore.values);
+book2.tags.sort();
+
+console.log('\n\nReorder its tags, its just too ugly in this way... Its still equals with the copy:');
+console.log('Equals: ' + book2.equals(book2Copy));
+console.log('book2: ', book2);
+console.log('book2Copy: ', book2Copy);

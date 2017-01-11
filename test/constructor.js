@@ -1,7 +1,8 @@
 'use strict';
 
 var assert = require('assert'),
-	mocha  = require('mocha');
+	mocha  = require('mocha'),
+	path   = require('path');
 
 var model                     = require('../lib/abstract-model'),
 	Book                      = require('./models/book'),
@@ -56,6 +57,33 @@ describe('Constructor', function() {
 
 		Object.keys(values).forEach(function(key) {
 			assert.equal(values[key], book[key]);
+		});
+	});
+
+	it('should use the given \'_class\' attribute instead of the calculated one', function() {
+		var values = {
+				_class: 'NotABook',
+				title: 'Test book',
+				author: 'Test author',
+				pages: 366
+			},
+			book = new Book(values);
+
+		assert.equal(book._class, values._class);
+	});
+
+	it('should load the custom class with full class path', function() {
+		var bookPath = path.join(__dirname, './models/book');
+
+		var values = {
+			_class: bookPath,
+			title: 'Test book',
+			author: 'Test author',
+			pages: 366
+		};
+
+		assert.doesNotThrow(function() {
+			var book = new Book(values); // eslint-disable-line no-unused-vars
 		});
 	});
 
