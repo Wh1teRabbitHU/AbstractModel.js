@@ -3,24 +3,22 @@
 var model = require('../../lib/abstract-model');
 
 const attributes = {
-	title: {
+	name: {
 		type: 'String',
 		required: true
 	},
-	author: 'String',
-	release: 'Number',
-	tags: 'String[]',
-	pages: {
-		type: 'Number',
-		max: 700
+	age: 'Number',
+	sex: {
+		type: 'String',
+		values: [ 'Male', 'Female' ]
 	}
 };
 
-class Book extends model.Class {
+class StoreKeeper extends model.Class {
 
 	constructor(values) {
 		super(attributes, values);
 	}
 }
 
-module.exports = Book;
+module.exports = StoreKeeper;

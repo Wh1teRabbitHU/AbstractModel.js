@@ -85,7 +85,7 @@ describe('Values', function() {
 
 		assert.equal(book._class, otherBook._class);
 		assert.deepEqual(book._attributes, otherBook._attributes);
-		assert.equal(book.tags, valuesB.tags);
+		assert.deepEqual(book.tags, valuesB.tags);
 		assert.equal(book.title, valuesB.title);
 	});
 });
