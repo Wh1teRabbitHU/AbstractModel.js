@@ -1,6 +1,6 @@
 {
   "name": "abstract-model",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "It's an abstract model scheme with some usefull automatisations and utilities",
   "main": "index.js",
   "scripts": {
