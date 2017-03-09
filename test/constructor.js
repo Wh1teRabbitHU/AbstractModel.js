@@ -5,22 +5,14 @@ var assert = require('assert'),
 	path   = require('path');
 
 var model                     = require('../lib/abstract-model'),
+	objectUtil                = require('../lib/utils/object-util'),
 	Book                      = require('./models/book'),
-	InitializationException   = require('../lib/exceptions/initialization-exception'),
 	InvalidTypeException      = require('../lib/exceptions/invalid-type-exception'),
 	MissingAttributeException = require('../lib/exceptions/missing-attribute-exception');
 
 var describe = mocha.describe,
 	it       = mocha.it,
 	before   = mocha.before;
-
-describe('Initialization', function() {
-	it('should throw an \'InitializationException\' when the class used without initialization', function() {
-		assert.throws(function() {
-			var book = new Book(); // eslint-disable-line no-unused-vars
-		}, InitializationException);
-	});
-});
 
 describe('Constructor', function() {
 	before(function() {
@@ -146,7 +138,7 @@ describe('Constructor', function() {
 		}, InvalidTypeException);
 	});
 
-	it('should get all the attributes', function() {
+	it('should convert simple initializers into object type', function() {
 		var attributes = {
 			title: 'String',
 			author: 'String',
@@ -165,7 +157,40 @@ describe('Constructor', function() {
 		assert.equal(attributes.length, anotherBook._attributes.length);
 
 		Object.keys(anotherBook._attributes).forEach(function(key) {
-			assert.equal(attributes[key], anotherBook._attributes[key]);
+			assert.deepEqual({ type: attributes[key] }, anotherBook._attributes[key]);
+		});
+	});
+
+	it('should get all the attributes', function() {
+		var attributes = {
+			title: 'String',
+			author: 'String',
+			tags: 'String[]',
+			genres: {
+				type: 'String[]'
+			},
+			pages: {
+				type: 'Number',
+				required: true
+			}
+		};
+
+		class AnotherBook extends model.Class {
+			constructor(values) {
+				super(attributes, values);
+			}
+		}
+
+		var anotherBook = new AnotherBook();
+
+		assert.equal(attributes.length, anotherBook._attributes.length);
+
+		Object.keys(anotherBook._attributes).forEach(function(key) {
+			if (objectUtil.isString(attributes[key])) {
+				assert.deepEqual({ type: attributes[key] }, anotherBook._attributes[key]);
+			} else {
+				assert.deepEqual(attributes[key], anotherBook._attributes[key]);
+			}
 		});
 	});
 });
