@@ -17,6 +17,7 @@
 	- [class.equals(otherClass)](#class-equals)
 	- [class.validate(validationMode)](#class-validate)
 	- [class.hasErrors()](#class-haserrors)
+	- [class.clone()](#class-clone)
 - [Working example](#working-example)
 
 ## <a id="description"></a> Description
@@ -90,7 +91,7 @@ You can use arrays as attributes, too. The syntax is the same, but with an '[]' 
 
 #### How to define the attributes?
 
-When you create a new class, you have to give the attributes to its super constructor. This is an Object type variable, and the keys are your attribute names. The value can be String (and it will be the type name of the attribute) or if you need some validation rules then Object. In this case, the type will be an attribute named to 'type'.
+When you create a new class, you have to give the attributes to its super constructor. This is an Object type variable, and the keys are your attribute names. The value can be String (and it will be the type name of the attribute) or if you need some validation rules then Object. In this case, the type will be an attribute named to 'type'. After you initialized the class, the attributes are converted into the Object-type form and stored in the '_attributes' inner variable. (The string-type is just a shortcut)
 
 Examples:
 
@@ -373,6 +374,33 @@ var book = new Book({
 });
 
 console.log(book.hasErrors()); // false
+```
+
+### <a id="class-clone"></a> class.clone()
+
+It makes a new, standalone instance from this entity. The values are identical, but the variable pointers are different. Every objects, arrays and primitive types gets a new instance, recursively.
+
+#### Example
+
+```javascript
+var model = require('abstract-model'),
+	Book = require('./models/book');
+
+model.init({
+	modelRoot: './models'
+});
+
+var book = new Book({
+	_class: 'Book',
+	title: 'New book',
+	pages: 366
+});
+
+var otherBook = book.clone();
+
+otherBook.title = 'Old book';
+
+console.log(book.title); // It's still 'New book', no matter what you are going to do with the otherBook!
 ```
 
 ## <a id="working-example"></a> Working example:
