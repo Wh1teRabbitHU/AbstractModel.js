@@ -19,6 +19,7 @@
 	- [class.hasErrors()](#class-haserrors)
 	- [class.clone()](#class-clone)
 - [Working example](#working-example)
+- [Changelogs](#changelogs)
 
 ## <a id="description"></a> Description
 
@@ -406,3 +407,31 @@ console.log(book.title); // It's still 'New book', no matter what you are going 
 ## <a id="working-example"></a> Working example:
 
 Check local-store.js under the example folder. Later I'll make an interactive page to play with the data.
+
+## <a id="changelogs"></a> Changelogs
+
+### 0.2.0
+
+- New functionality, pre-registering your model instances. It's very handy for package tools such as browserify! (It had a problem when if you tried to dinamicaly require modules, then it didn't include submodels and eventually crashed)
+- Big cleanup refactor. Now its a bit better to understand the code under the hood. All main functions are separated by their functionality.
+
+### 0.1.3
+
+- Minor fixes. Now you can pass null as 'values'. In the following cases:
+	- The update function now do nothing. (previously it's just crashed)
+	- The 'values' setter clears all the values assigned to the model instance.
+- Removed 'fs' module, because Browserify is not entirely support its functionality so it had to go. Although It's still not working fully with client side packagers. (It's a future plan to fix entirely)
+
+## 0.1.2
+
+- All attributes are now converted into object type. It makes the code a bit more readable and now its a bit easier to follow the changes of the instance's inner attributes.
+- New global function: 'clone(obj)'. It creates an other instance with the given instance values, recursively. (every sub-models and arrays are cloned also as a new instance)
+- The abstract model also has this function: 'clone()'. Same as the global one, it makes a new copy from the model instance, recursively.
+
+## 0.1.1
+
+- Updated 'values' getter. It's now recursively filters the object's values. No longer leave the sub-model's inner attributes in the returned value object.
+
+## 0.1.0
+
+- First bigger release. The implemented functions are (hopefully :) ) working and all the functionality has unit test cases.
