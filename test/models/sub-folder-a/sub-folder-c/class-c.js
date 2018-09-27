@@ -3,8 +3,8 @@
 var model = require('../../../../lib/abstract-model');
 
 const attributes = {
-	name: 'String',
-	value: 'String'
+	name: String,
+	value: String
 };
 
 class ClassC extends model.Class {

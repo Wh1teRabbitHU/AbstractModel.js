@@ -79,12 +79,12 @@ describe('Update', function() {
 
 	it('should handle all value types', function() {
 		var attributes = {
-			stringAttr: 'String',
-			numberAttr: 'Number',
-			booleanAttr: 'Boolean',
-			objectAttr: 'Object',
-			arrayAttr: 'String[]',
-			bookAttr: 'Book'
+			stringAttr: String,
+			numberAttr: Number,
+			booleanAttr: Boolean,
+			objectAttr: Object,
+			arrayAttr: [ String ],
+			bookAttr: Book
 		};
 
 		class PrimitiveOnlyClass extends model.Class {
@@ -112,12 +112,12 @@ describe('Update', function() {
 
 	it('should throws exception if the given value has wrong type', function() {
 		var attributes = {
-			stringAttr: 'String',
-			numberAttr: 'Number',
-			booleanAttr: 'Boolean',
-			objectAttr: 'Object',
-			arrayAttr: 'String[]',
-			bookAttr: 'Book'
+			stringAttr: String,
+			numberAttr: Number,
+			booleanAttr: Boolean,
+			objectAttr: Object,
+			arrayAttr: [ String ],
+			bookAttr: Book
 		};
 
 		class PrimitiveOnlyClass extends model.Class {
@@ -226,19 +226,19 @@ describe('Update', function() {
 	it('should initialize attributes if their types defined with an Object, not a string', function() {
 		var attributes = {
 				title: {
-					type: 'String'
+					type: String
 				},
 				author: {
-					type: 'String'
+					type: String
 				},
 				tags: {
-					type: 'String[]'
+					type: [ String ]
 				},
 				pages: {
-					type: 'Number'
+					type: Number
 				},
 				otherBooks: {
-					type: 'Book[]'
+					type: [ Book ]
 				}
 			},
 			bookValues = {

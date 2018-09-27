@@ -21,35 +21,35 @@ describe('Validator', function() {
 
 		attributes = {
 			title: {
-				type: 'String',
+				type: String,
 				length: 5,
 				required: true
 			},
 			author: {
-				type: 'String',
+				type: String,
 				length: 20,
 				required: true
 			},
 			tags: {
-				type: 'String[]',
+				type: [ String ],
 				required: true
 			},
 			pages: {
-				type: 'Number',
+				type: Number,
 				min: 10,
 				max: 100,
 				required: true
 			},
 			genre: {
-				type: 'String',
+				type: String,
 				values: [ 'sci-fi', 'action', 'noir' ]
 			},
 			catalogNumber: {
-				type: 'String',
+				type: String,
 				regexp: /[A-Z]{3}[0-9]{6}/
 			},
 			isTooLongToRead: {
-				type: 'Boolean',
+				type: Boolean,
 				custom: function(value) {
 					return value;
 				}

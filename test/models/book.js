@@ -3,10 +3,10 @@
 var model = require('../../lib/abstract-model');
 
 const attributes = {
-	title: 'String',
-	author: 'String',
-	tags: 'String[]',
-	pages: 'Number'
+	title: String,
+	author: String,
+	tags: [ String ],
+	pages: Number
 };
 
 class Book extends model.Class {
