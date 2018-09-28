@@ -1,15 +1,17 @@
 'use strict';
 
-var model = require('../../lib/abstract-model');
+const model       = require('../../lib/abstract-model');
+const Book        = require('./book');
+const StoreKeeper = require('./store-keeper');
 
 const attributes = {
 	name: {
-		type: 'String',
+		type: String,
 		required: true
 	},
-	books: 'Book[]',
-	workers: 'StoreKeeper[]',
-	owner: 'StoreKeeper'
+	books: [ Book ],
+	workers: [ StoreKeeper ],
+	owner: StoreKeeper
 };
 
 class Store extends model.Class {

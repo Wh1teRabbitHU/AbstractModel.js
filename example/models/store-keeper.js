@@ -4,12 +4,12 @@ var model = require('../../lib/abstract-model');
 
 const attributes = {
 	name: {
-		type: 'String',
+		type: String,
 		required: true
 	},
-	age: 'Number',
+	age: Number,
 	sex: {
-		type: 'String',
+		type: String,
 		values: [ 'Male', 'Female' ]
 	}
 };

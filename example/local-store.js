@@ -1,17 +1,13 @@
 'use strict';
 
-var model       = require('../lib/abstract-model'),
-	Book        = require('./models/book'),
-	Store       = require('./models/store'),
-	StoreKeeper = require('./models/store-keeper');
+const model       = require('../lib/abstract-model');
+const Book        = require('./models/book');
+const Store       = require('./models/store');
+const StoreKeeper = require('./models/store-keeper');
 
-var books        = require('./data/books'),
-	storeKeepers = require('./data/store-keepers'),
-	stores       = require('./data/stores');
-
-model.init({
-	modelRoot: './models'
-});
+const books        = require('./data/books');
+const storeKeepers = require('./data/store-keepers');
+const stores       = require('./data/stores');
 
 let book1 = new Book(books[0]);
 
@@ -28,7 +24,9 @@ book1.values = books[2];
 console.log('\n\nOverwrite all the values: ');
 console.log(book1);
 
-let book2 = model.parse({
+model.registerClass(Book);
+
+let book2 = model.parseObject({
 	_class: 'Book',
 	title: 'Dune',
 	author: 'Arthur C. Clarke',
