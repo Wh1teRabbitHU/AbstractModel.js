@@ -31,7 +31,8 @@ describe('Validator', function() {
 				required: true
 			},
 			tags: {
-				type: [ String ],
+				type: String,
+				isArray: true,
 				required: true
 			},
 			pages: {

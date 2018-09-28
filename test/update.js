@@ -155,7 +155,7 @@ describe('Update', function() {
 
 	it('should create custom class from simple object', function() {
 		var attributes = {
-				bookAttr: 'Book'
+				bookAttr: Book
 			},
 			bookValues = {
 				title: 'Title',
@@ -198,7 +198,7 @@ describe('Update', function() {
 
 	it('should create two equal custom object if they have the same values', function() {
 		var attributes = {
-				otherBooks: 'Book[]'
+				otherBooks: [ Book ]
 			},
 			bookValues = {
 				title: 'Title',
@@ -232,13 +232,15 @@ describe('Update', function() {
 					type: String
 				},
 				tags: {
-					type: [ String ]
+					type: String,
+					isArray: true
 				},
 				pages: {
 					type: Number
 				},
 				otherBooks: {
-					type: [ Book ]
+					type: Book,
+					isArray: true
 				}
 			},
 			bookValues = {
