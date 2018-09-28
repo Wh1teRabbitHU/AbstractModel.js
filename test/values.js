@@ -3,20 +3,12 @@
 var assert = require('assert'),
 	mocha  = require('mocha');
 
-var model = require('../lib/abstract-model'),
-	Book  = require('./models/book');
+var Book  = require('./models/book');
 
 var describe = mocha.describe,
-	it       = mocha.it,
-	before   = mocha.before;
+	it       = mocha.it;
 
 describe('Values', function() {
-	before(function() {
-		model.init({
-			modelRoot: './test/models'
-		});
-	});
-
 	it('should only return with the predefined attribute\'s values', function() {
 		var bookValues = {
 			title: 'Title',

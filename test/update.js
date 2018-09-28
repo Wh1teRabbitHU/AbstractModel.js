@@ -8,16 +8,9 @@ var model                = require('../lib/abstract-model'),
 	InvalidTypeException = require('../lib/exceptions/invalid-type-exception');
 
 var describe = mocha.describe,
-	it       = mocha.it,
-	before   = mocha.before;
+	it       = mocha.it;
 
 describe('Update', function() {
-	before(function() {
-		model.init({
-			modelRoot: './test/models'
-		});
-	});
-
 	it('should set all given values to the model', function() {
 		var book = new Book(),
 			oldValues = book.values,

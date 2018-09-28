@@ -15,10 +15,6 @@ var attributes;
 
 describe('Validator', function() {
 	before(function() {
-		model.init({
-			modelRoot: './test/models'
-		});
-
 		attributes = {
 			title: {
 				type: String,

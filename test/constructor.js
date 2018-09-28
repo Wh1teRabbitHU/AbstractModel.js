@@ -10,15 +10,9 @@ var model                     = require('../lib/abstract-model'),
 	MissingAttributeException = require('../lib/exceptions/missing-attribute-exception');
 
 var describe = mocha.describe,
-	it       = mocha.it,
-	before   = mocha.before;
+	it       = mocha.it;
 
 describe('Constructor', function() {
-	before(function() {
-		model.init({
-			modelRoot: './test/models'
-		});
-	});
 
 	it('should create a \'Book\' class, without throwing exceptions', function() {
 		assert.doesNotThrow(function() {

@@ -35,10 +35,6 @@ class TestClass extends model.Class {
 
 describe('Equals', function() {
 	before(function() {
-		model.init({
-			modelRoot: './test/models'
-		});
-
 		testValues = {
 			title: 'Test entity',
 			tags: [ 'a', 'b', 'c' ],

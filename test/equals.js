@@ -8,7 +8,6 @@ var model = require('../lib/abstract-model'),
 
 var describe   = mocha.describe,
 	it         = mocha.it,
-	before     = mocha.before,
 	beforeEach = mocha.beforeEach;
 
 var classA, classB;
@@ -70,14 +69,6 @@ function createTwoIdenticalObject() {
 }
 
 describe('Equals', function() {
-	before(function() {
-		model.init({
-			modelRoot: './test/models'
-		});
-
-		createTwoIdenticalObject();
-	});
-
 	beforeEach(function() {
 		createTwoIdenticalObject();
 	});
