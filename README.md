@@ -5,7 +5,7 @@
 - [Description](#description)
 - [Installation](#installation)
 - [Usage](#usage)
-	- [Initialization](#initialization)
+	- [Register classes](#registering-classes)
 	- [Attributes](#attributes)
 	- [Create a class](#create-a-class)
 	- [Parsing json Object](#parsing-json-object)
@@ -40,37 +40,26 @@ git clone https://github.com/Wh1teRabbitHU/AbstractModel.js.git
 
 ## <a id="usage"></a> Usage
 
-### <a id="initialization"></a> Initialization
+### <a id="registering-classes"></a> Registering classes
 
-Before you do anything with your classes, you must initialize the abstract-model module:
+Before you can use the parser function, you must register all your model classes. However, if you wont use the parser, you can skip the registration entirely.
+Example code:
 
 ```javascript
-var model = require('abstract-model');
+const model = require('abstract-model');
+const Book  = require('./models/book');
 
-const OPTIONS = {
-	modelRoot: './example/models'
-};
+model.registerClass(Book);
 
-model.init(OPTIONS);
+let bookInstance = model.parseObject({
+	_class: 'Book',
+	title: 'Dune',
+	author: 'Arthur C. Clarke',
+	release: 1965,
+	tags: [ 'Sci-fi', 'Drama', 'Space' ],
+	pages: 534
+});
 ```
-
-#### Available options:
-
-| Name | Type | Required? | Default | Description |
-| ---- | ---- | --------- | ------- | ----------- |
-| modelRoot | String | true | - | Path to your models. This attribute tells the class that where to find your model files. After the initialization, if you pass a json object to the parser with a '_class' attribute, then it'll automaticly create the target class instance and update with the given values. If your model classes are separately structured, you also have to concat the subfolder's path to this attribute. |
-| validatonMode | String | false | 'normal' | It define, how the validator handle the errors. There are two available values: 'normal', 'strict'. If the validator is in the 'strict' mode, the update function will throws exception if found an error. In normal mode it'll only fill the errors object, so you have to retrieve it ('_errors') or manualy validate the class later |
-
-Example folder structure:
-
-| Model path | '_class' value |
-| ---------- | -------------- |
-| ./models/library/book.js | 'library/book' |
-| ./models/library/category.js | 'library/category' |
-| ./models/library/shelf.js | 'library/shelf' |
-| ./models/account/transport.js | 'account/transport' |
-| ./models/account/bill.js | 'account/bill' |
-| ./models/message.js | 'message' |
 
 ### <a id="attributes"></a> Attributes
 
@@ -80,29 +69,41 @@ The following types are available:
 - Number
 - Boolean
 - Object
-- Custom (it will find the definition by the '_class' attribute and create a new instance if needed)
+- _Or any extension of the abstract-model class_
 
-You can use arrays as attributes, too. The syntax is the same, but with an '[]' at the end. Examples:
+You can use arrays as attributes, too. The syntax is similar, but you have to put the type inside an array. Only one type allowed! Examples:
 
-- String[]
-- Number[]
-- Boolean[]
-- Object[]
-- Custom[]
+- [ String ]
+- [ Number ]
+- [ Boolean ]
+- [ Object ]
+- [ _Or any extension of the abstract-model class_ ]
 
 #### How to define the attributes?
 
-When you create a new class, you have to give the attributes to its super constructor. This is an Object type variable, and the keys are your attribute names. The value can be String (and it will be the type name of the attribute) or if you need some validation rules then Object. In this case, the type will be an attribute named to 'type'. After you initialized the class, the attributes are converted into the Object-type form and stored in the '_attributes' inner variable. (The string-type is just a shortcut)
+When you create a new class, you have to give the attributes to its super constructor. This is an Object type variable, and the keys are your attribute names. The value is the type of the attribute or if you need some validation rules then Object. (You must provide every necessary options when you use this option) After you initialized the class, the attributes are converted into the Object-type form and stored in the '_attributes' inner variable. (The direct type declaration is just a shortcut)
+When you provide Object, the following options are available:
+
+- type: Type of the attribute. The format is the same used in the shortcuts.
+- isArray: If the attribute is an array, then its true.
+- Validation rules: See the ['validation'](#validation) section.
 
 Examples:
 
 ```javascript
+const Worker = require('./worker');
 const CLASS_ATTRIBUTE = {
-	title: 'String', 	// String-type attribute description
+	title: String, 	// String-type attribute description
 	name: { 			// Object-type attribute description
-		type: 'String',
+		type: String,
+		isArray: false,
 		max: 20,
 		required: true
+	},
+	tags: [ String ],
+	colleagues: {
+		type: Worker,
+		isArray: true
 	}
 }
 ```
@@ -113,24 +114,30 @@ The abstract class has a few inner attributes. You shouldn't change them manualy
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| _class | String | The class's own name and/or path to the declaration. By default it's the class's name, but when you try to parse a simple Object or just using a different name/path, then you have to provide it in the values. You can also use this attribute with direct/full path. |
+| _class | String | The class's own name and/or the given alias. By default it's the class's name, but when you register a class for parsing, you can provide an alias for the specific instance. It can be handy, when you have multiple classes with the same name. |
 | _attributes | Object | After you create a class it will contains all the predefined attributes. Inner attributes are excluded. |
 | _errors | Object | It contains those attributes that failed during the validation process. Every key is an attribute name and the value pair is an array with the errors. |
 
 ### <a id="create-a-class"></a> Create a class
 
-To extend and use your class, you won't need any special thing. In the constructor you have to pass the class attributes and the initializer values.
+To extend and use your class, you won't need any special setup. In the constructor you have to pass the class attributes and the initializer values. (the attributes are required it will throw an exception if missing. The values are just recommended)
 
 ```javascript
-var model = require('abstract-model');
+const model = require('abstract-model');
+const Book  = require('./book');
 
-var attributes = {
-	stringAttr: 'String',
-	numberAttr: 'Number',
-	booleanAttr: 'Boolean',
-	objectAttr: 'Object',
-	arrayAttr: 'String[]',
-	bookAttr: 'Book'
+const attributes = {
+	stringAttr: String,
+	numberAttr: {
+		type: Number,
+		isArray: false,
+		max: 100,
+		required: true
+	},
+	booleanAttr: Boolean,
+	objectAttr: Object,
+	arrayAttr: [ String ],
+	bookAttr: Book
 };
 
 class AllTypeClass extends model.Class {
@@ -149,28 +156,34 @@ And thats all, you can use it now! Pass any object to the constructor (or the up
 
 ### <a id="parsing-json-object"></a> Parsing json object
 
-The module has a parser function, too. You can parse any object to an already defined class. The given object has to have a '_class' attribute to identify the target class. If its missing or the class cannot be located, the parser throws an error.
+The module has a parser function, too. You can parse any object to all the defined and registered classes. The given object has to have a '_class' attribute to identify the target class. If its missing or the class cannot be located, the parser throws an error. Alternatively you can provide a class object to the parser function. If you give both class object and '_class' attribte, then the object will be used.
 
 #### Example
 
 ```javascript
-var model = require('abstract-model'),
-	Book = require('./models/book');
-
-model.init({
-	modelRoot: './models'
-});
+const model = require('abstract-model');
+const Book  = require('./models/book');
 
 const bookValues = {
 	_class: 'Book',
 	title: 'New book',
 	pages: 366
 };
+const bookValues2 = {
+	_class: 'bookAlias',
+	title: 'New book',
+	pages: 366
+};
 
-var book = model.parse(bookValues),
-	book2 = new Book(bookValues);
+model.registerClass(Book);
+model.registerClass(Book, 'bookAlias');
+
+var book  = model.parseObject(bookValues),
+	book2 = model.parseObject(bookValues2),
+	book3 = new Book(bookValues);
 
 console.log(book.equals(book2)); // true
+console.log(book2.equals(book3)); // true
 ```
 
 ### <a id="validation"></a> Validation
@@ -194,15 +207,10 @@ The following rules are available:
 ### <a id="constructor"></a> Constructor
 
 What's the constructor's job?
-It sets your predefined attributes to the class, initialize with the given values (if nothing is added, then skipping this part) and validate them. If the validator is in the 'strict' mode and find some inconsistence, it throws an error. (Runs after the update function, so it sets your values anyway)
+It sets your predefined attributes to the class, initialize with the given values (if nothing is added, then skipping this part) and validate them.
 
 ```javascript
-var model = require('abstract-model'),
-	Book = require('./models/book');
-
-model.init({
-	modelRoot: './models'
-});
+const Book = require('./models/book');
 
 var book = new Book();
 
@@ -221,12 +229,7 @@ This function updates the class with the given values. It'll skip those attribut
 #### Example
 
 ```javascript
-var model = require('abstract-model'),
-	Book = require('./models/book');
-
-model.init({
-	modelRoot: './models'
-});
+const Book = require('./models/book');
 
 var book = new Book();
 
@@ -243,12 +246,7 @@ Every class has a values attribute with both getter and setter. When you retreiv
 #### Getter example
 
 ```javascript
-var model = require('abstract-model'),
-	Book = require('./models/book');
-
-model.init({
-	modelRoot: './models'
-});
+const Book = require('./models/book');
 
 var book = new Book();
 
@@ -271,12 +269,7 @@ console.log(book.values);
 #### Setter example
 
 ```javascript
-var model = require('abstract-model'),
-	Book = require('./models/book');
-
-model.init({
-	modelRoot: './models'
-});
+const Book = require('./models/book');
 
 var book = new Book({
 	title: 'New book',
@@ -303,17 +296,12 @@ console.log(book.values);
 
 ### <a id="class-equals"></a> class.equals(otherClass)
 
-It's checking if your class is equals to the other class. The class name/path, the given attributes and all the values recursively has to be the same to return true. If one of the attributes is an array, then it will sort in both class, so the order doesn't matter in the result.
+It's checking if your class is equals to the other class. The given attributes and all the values recursively has to be the same to return true. If one of the attributes is an array, then it will sort in both class, so the order doesn't matter in the result.
 
 #### Example
 
 ```javascript
-var model = require('abstract-model'),
-	Book = require('./models/book');
-
-model.init({
-	modelRoot: './models'
-});
+const Book = require('./models/book');
 
 const bookValues = {
 	_class: 'Book',
@@ -329,17 +317,12 @@ console.log(book.equals(book2)); // true
 
 ### <a id="class-validate"></a> class.validate(validationMode)
 
-It's the validation function. It runs automaticaly right after the constructor, update and 'values' setter functions. It returns an object with all the found errors. If everything is fine, this object is empty. The validate function has an argument, that changes the validator's mode temporarily. (It's a good practice that if you init your class with normal mode, and you run the validator in strict mode whenever you need it) For the details, check the ['Validation'](#validation) part.
+It's the validator function. It runs automaticaly right after the constructor, update and 'values' setter functions. It returns an object with all the found errors. If everything is fine, this object is empty. The validate function has an argument, that changes the validator's mode temporarily. (It's a good practice that if you init your class with normal mode, and you run the validator in strict mode whenever you need it) For the details, check the ['Validation'](#validation) part.
 
 #### Example
 
 ```javascript
-var model = require('abstract-model'),
-	Book = require('./models/book');
-
-model.init({
-	modelRoot: './models'
-});
+const Book = require('./models/book');
 
 var book = new Book({
 	_class: 'Book',
@@ -361,12 +344,7 @@ Checking if the class's values has any errors. Returns true, if one or more erro
 #### Example
 
 ```javascript
-var model = require('abstract-model'),
-	Book = require('./models/book');
-
-model.init({
-	modelRoot: './models'
-});
+const Book = require('./models/book');
 
 var book = new Book({
 	_class: 'Book',
@@ -384,12 +362,7 @@ It makes a new, standalone instance from this entity. The values are identical, 
 #### Example
 
 ```javascript
-var model = require('abstract-model'),
-	Book = require('./models/book');
-
-model.init({
-	modelRoot: './models'
-});
+const Book = require('./models/book');
 
 var book = new Book({
 	_class: 'Book',
@@ -412,8 +385,9 @@ Check local-store.js under the example folder. Later I'll make an interactive pa
 
 ### 0.2.0
 
-- New functionality, pre-registering your model instances. It's very handy for package tools such as browserify! (It had a problem when if you tried to dinamicaly require modules, then it didn't include submodels and eventually crashed)
-- Big cleanup refactor. Now its a bit better to understand the code under the hood. All main functions are separated by their functionality.
+- Huge refactor. Most functionalities are separated into different files. Clearer code and less workaround and spagetti.
+- Changing the type declaration from string to objects. It helps when using in browser. (it will automatically include all the needed class declarations)
+- Removing folder scans and recursive scanning. (no need for that) What is left is the class registration for the parser object
 
 ### 0.1.3
 
@@ -422,16 +396,16 @@ Check local-store.js under the example folder. Later I'll make an interactive pa
 	- The 'values' setter clears all the values assigned to the model instance.
 - Removed 'fs' module, because Browserify is not entirely support its functionality so it had to go. Although It's still not working fully with client side packagers. (It's a future plan to fix entirely)
 
-## 0.1.2
+### 0.1.2
 
 - All attributes are now converted into object type. It makes the code a bit more readable and now its a bit easier to follow the changes of the instance's inner attributes.
 - New global function: 'clone(obj)'. It creates an other instance with the given instance values, recursively. (every sub-models and arrays are cloned also as a new instance)
 - The abstract model also has this function: 'clone()'. Same as the global one, it makes a new copy from the model instance, recursively.
 
-## 0.1.1
+### 0.1.1
 
 - Updated 'values' getter. It's now recursively filters the object's values. No longer leave the sub-model's inner attributes in the returned value object.
 
-## 0.1.0
+### 0.1.0
 
 - First bigger release. The implemented functions are (hopefully :) ) working and all the functionality has unit test cases.
