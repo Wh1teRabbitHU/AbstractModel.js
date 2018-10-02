@@ -10,7 +10,13 @@
 	- [Create a class](#create-a-class)
 	- [Parsing json Object](#parsing-json-object)
 	- [Validation](#validation)
-- [Methods](#methods)
+- [Module methods](#module-methods)
+	- [abstractModel.registerClass(class, alias, ignoreDuplicate)](#abstract-model-register-class)
+	- [abstractModel.parseObject(object, class)](#abstract-model-parse-object)
+	- [abstractModel.isClassRegistered(alias)](#abstract-model-is-class-registered)
+	- [abstractModel.dropRegisteredClasses()](#abstract-model-drop-registered-classes)
+	- [abstractModel.Class](#abstract-model-class)
+- [Class methods](#class-methods)
 	- [Constructor](#constructor)
 	- [class.update(values)](#class-update)
 	- [class.values](#class-values)
@@ -156,35 +162,7 @@ And thats all, you can use it now! Pass any object to the constructor (or the up
 
 ### <a id="parsing-json-object"></a> Parsing json object
 
-The module has a parser function, too. You can parse any object to all the defined and registered classes. The given object has to have a '_class' attribute to identify the target class. If its missing or the class cannot be located, the parser throws an error. Alternatively you can provide a class object to the parser function. If you give both class object and '_class' attribte, then the object will be used.
-
-#### Example
-
-```javascript
-const model = require('abstract-model');
-const Book  = require('./models/book');
-
-const bookValues = {
-	_class: 'Book',
-	title: 'New book',
-	pages: 366
-};
-const bookValues2 = {
-	_class: 'bookAlias',
-	title: 'New book',
-	pages: 366
-};
-
-model.registerClass(Book);
-model.registerClass(Book, 'bookAlias');
-
-var book  = model.parseObject(bookValues),
-	book2 = model.parseObject(bookValues2),
-	book3 = new Book(bookValues);
-
-console.log(book.equals(book2)); // true
-console.log(book2.equals(book3)); // true
-```
+The module has a parser function, too. You can parse any object to all the defined and registered classes. The given object has to have a '_class' attribute to identify the target class. If its missing or the class cannot be located, the parser throws an error. Alternatively you can provide a class object to the parser function. If you give both class object and '_class' attribte, then the object will be used. See more details at the [methods](#abstract-model-parse-object) section
 
 ### <a id="validation"></a> Validation
 
@@ -202,7 +180,140 @@ The following rules are available:
 | regexp | String | Checking if the value is matching with the given regular expression. (Using the [RegExp](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp) object) The given patter will be passed as an argument to the RegExp global object's constructor |
 | custom | All | Checking if the value is passing the predefined custom validator function. It has one input parameter, the attribute's value and it must return with the validation result (Boolean) |
 
-## <a id="methods"></a> Methods
+## <a id="module-methods"></a> Module methods
+
+Its all the modules functionality. You can call all these functions directly from the module instace.
+
+### <a id="abstract-model-register-class"></a> abstractModel.registerClass(class, alias, ignoreDuplicate)
+
+This method helps you with parsing as it preregister all the later-used classes. You can link an alias to your class, so it can be easily registered two class objects with the same name. If the alias parameter is absent, then the class objects name will be the alias. By default if you try to register a class twice with the same alias, it will throw an AlreadyRegisteredException. If you need to overwrite a registered object, you can do it with the third parameter.
+
+```javascript
+const model = require('abstract-model');
+const Book  = require('./models/book');
+
+const bookAlias = 'bookAlias';
+
+
+model.registerClass(Book);
+model.registerClass(Book, bookAlias);
+model.registerClass(Book, bookAlias, true); // overwrite the previous registration on the 'bookAlias' alias
+
+```
+
+### <a id="abstract-model-parse-object"></a> abstractModel.parseObject(object, class)
+
+This method help you with parsing simple javascript objects into a class instance. Either you provide a class object as the second parameter for this method or it can find automatically in the already registered class list. (In this case the praseable object has to contains one attribute to determine which class needed to load by the parser. This attributes name is '_class') In both cases you can gave an alias or a class object to this method.
+
+```javascript
+const model = require('abstract-model');
+const Book  = require('./models/book');
+
+const bookAlias = 'bookAlias';
+
+const bookValues = {
+	_class: Book,
+	title: 'New book',
+	pages: 366
+};
+const bookValuesWithAlias = {
+	_class: bookAlias,
+	title: 'New book',
+	pages: 366
+};
+const bookValuesWithoutClassAttribute = {
+	title: 'New book',
+	pages: 366
+};
+
+model.registerClass(Book);
+model.registerClass(Book, bookAlias);
+
+var book  = model.parseObject(bookValues),
+	book2 = model.parseObject(bookValuesWithAlias),
+	book3 = model.parseObject(bookValuesWithoutClassAttribute, Book),
+	book4 = model.parseObject(bookValuesWithoutClassAttribute, bookAlias),
+	book5 = new Book(bookValues);
+
+console.log(book.equals(book2)); // true
+console.log(book2.equals(book3)); // true
+console.log(book3.equals(book4)); // true
+console.log(book4.equals(book5)); // true
+```
+
+### <a id="abstract-model-is-class-registered"></a> abstractModel.isClassRegistered(alias)
+
+It checks if the given alias or class object already registered. If you call this method without any input parameter or with a bad parameter type, it will throw an error!
+
+```javascript
+const model = require('abstract-model');
+const Book  = require('./models/book');
+
+const bookAlias = 'bookAlias';
+const bookAlias2 = 'bookAlias2';
+
+model.registerClass(Book);
+model.registerClass(Book, bookAlias);
+
+console.log(model.isClassRegistered(Book)); // true
+console.log(model.isClassRegistered(bookAlias)); // true
+console.log(model.isClassRegistered(bookAlias2)); // false
+```
+
+### <a id="abstract-model-drop-registered-classes"></a> abstractModel.dropRegisteredClasses()
+
+This method drops all the previously registered classes.
+
+```javascript
+const model = require('abstract-model');
+const Book  = require('./models/book');
+
+const bookAlias = 'bookAlias';
+
+model.registerClass(Book);
+model.registerClass(Book, bookAlias);
+
+console.log(model.isClassRegistered(Book)); // true
+console.log(model.isClassRegistered(bookAlias)); // true
+
+model.dropRegisteredClasses();
+
+console.log(model.isClassRegistered(Book)); // false
+console.log(model.isClassRegistered(bookAlias)); // false
+```
+
+### <a id="abstract-model-class"></a> abstractModel.Class
+
+This is the abstract class object. When you create a new class, you have to extend with this object. Also you must provide the constructor with the classes attributes. This class has all the methods and functionality disgusted in the next section.
+
+```javascript
+const model = require('abstract-model');
+const Book  = require('./book');
+
+const attributes = {
+	stringAttr: String,
+	numberAttr: {
+		type: Number,
+		isArray: false,
+		max: 100,
+		required: true
+	},
+	booleanAttr: Boolean,
+	objectAttr: Object,
+	arrayAttr: [ String ],
+	bookAttr: Book
+};
+
+class AllTypeClass extends model.Class {
+
+	constructor(values) {
+		super(attributes, values);
+	}
+
+}
+```
+
+## <a id="class-methods"></a> Class methods
 
 ### <a id="constructor"></a> Constructor
 
@@ -383,11 +494,13 @@ Check local-store.js under the example folder. Later I'll make an interactive pa
 
 ## <a id="changelogs"></a> Changelogs
 
-### 0.2.0
+### 1.0.0
 
-- Huge refactor. Most functionalities are separated into different files. Clearer code and less workaround and spagetti.
-- Changing the type declaration from string to objects. It helps when using in browser. (it will automatically include all the needed class declarations)
-- Removing folder scans and recursive scanning. (no need for that) What is left is the class registration for the parser object
+- Huge refactor. Most functionalities are separated into different files. More readable code, less workaround and spagetti.
+- Changing the type declaration from strings to objects. It helps when using in browser. (it will automatically include all the needed class declarations if you use browserify or webpack)
+- Removing folder scans and recursive scanning. (no more need for that) What is left is the class registration for the parser object and some handy methods.
+- More simpler and easy-to-use parser without any initialization required. More options for the parser.
+- Revisited unit tests, all functionality covered
 
 ### 0.1.3
 
