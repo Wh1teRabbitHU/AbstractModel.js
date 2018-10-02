@@ -1,6 +1,10 @@
 # AbstractModel.js
 
-![Badges](https://img.shields.io/travis/Wh1teRabbitHU/AbstractModel.js.svg)
+![badge-licence](https://img.shields.io/github/license/Wh1teRabbitHU/AbstractModel.js.svg)
+![badge-release](https://img.shields.io/github/package-json/v/Wh1teRabbitHU/AbstractModel.js.svg)
+![badge-travis](https://img.shields.io/travis/Wh1teRabbitHU/AbstractModel.js.svg)
+![badge-npm-bundle-size-minified](https://img.shields.io/bundlephobia/min/abstract-model.svg)
+![badge-npm-bundle-size-minified-gzip](https://img.shields.io/bundlephobia/minzip/abstract-model.svg)
 
 ## Bookmarks
 
