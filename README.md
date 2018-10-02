@@ -1,5 +1,7 @@
 # AbstractModel.js
 
+![Badges](https://img.shields.io/travis/Wh1teRabbitHU/AbstractModel.js.svg)
+
 ## Bookmarks
 
 - [Description](#description)
