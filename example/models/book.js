@@ -4,14 +4,14 @@ var model = require('../../lib/abstract-model');
 
 const attributes = {
 	title: {
-		type: 'String',
+		type: String,
 		required: true
 	},
-	author: 'String',
-	release: 'Number',
-	tags: 'String[]',
+	author: String,
+	release: Number,
+	tags: [ String ],
 	pages: {
-		type: 'Number',
+		type: Number,
 		max: 700
 	}
 };

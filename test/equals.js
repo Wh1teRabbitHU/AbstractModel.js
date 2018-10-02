@@ -8,7 +8,6 @@ var model = require('../lib/abstract-model'),
 
 var describe   = mocha.describe,
 	it         = mocha.it,
-	before     = mocha.before,
 	beforeEach = mocha.beforeEach;
 
 var classA, classB;
@@ -16,21 +15,23 @@ var classA, classB;
 function createTwoIdenticalObject() {
 	var attributes = {
 			title: {
-				type: 'String'
+				type: String
 			},
 			author: {
-				type: 'String'
+				type: String
 			},
 			tags: {
-				type: 'String[]'
+				type: String,
+				isArray: true
 			},
 			pages: {
-				type: 'Number'
+				type: Number
 			},
 			otherBooks: {
-				type: 'Book[]'
+				type: Book,
+				isArray: true
 			},
-			simpleObject: 'Object'
+			simpleObject: Object
 		},
 		bookValues = {
 			title: 'Title',
@@ -68,14 +69,6 @@ function createTwoIdenticalObject() {
 }
 
 describe('Equals', function() {
-	before(function() {
-		model.init({
-			modelRoot: './test/models'
-		});
-
-		createTwoIdenticalObject();
-	});
-
 	beforeEach(function() {
 		createTwoIdenticalObject();
 	});
@@ -91,18 +84,6 @@ describe('Equals', function() {
 		classB.tags[2] = first;
 
 		assert.ok(classA.equals(classB));
-	});
-
-	it('should not equals if they have different classes', function() {
-		classA._class = 'NotABook';
-
-		assert.ok(!classA.equals(classB));
-
-		createTwoIdenticalObject();
-
-		classA.otherBooks[0]._class = 'NotABook';
-
-		assert.ok(!classA.equals(classB));
 	});
 
 	it('should not equals if one of them is null or undefined', function() {

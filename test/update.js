@@ -8,16 +8,9 @@ var model                = require('../lib/abstract-model'),
 	InvalidTypeException = require('../lib/exceptions/invalid-type-exception');
 
 var describe = mocha.describe,
-	it       = mocha.it,
-	before   = mocha.before;
+	it       = mocha.it;
 
 describe('Update', function() {
-	before(function() {
-		model.init({
-			modelRoot: './test/models'
-		});
-	});
-
 	it('should set all given values to the model', function() {
 		var book = new Book(),
 			oldValues = book.values,
@@ -79,12 +72,12 @@ describe('Update', function() {
 
 	it('should handle all value types', function() {
 		var attributes = {
-			stringAttr: 'String',
-			numberAttr: 'Number',
-			booleanAttr: 'Boolean',
-			objectAttr: 'Object',
-			arrayAttr: 'String[]',
-			bookAttr: 'Book'
+			stringAttr: String,
+			numberAttr: Number,
+			booleanAttr: Boolean,
+			objectAttr: Object,
+			arrayAttr: [ String ],
+			bookAttr: Book
 		};
 
 		class PrimitiveOnlyClass extends model.Class {
@@ -112,12 +105,12 @@ describe('Update', function() {
 
 	it('should throws exception if the given value has wrong type', function() {
 		var attributes = {
-			stringAttr: 'String',
-			numberAttr: 'Number',
-			booleanAttr: 'Boolean',
-			objectAttr: 'Object',
-			arrayAttr: 'String[]',
-			bookAttr: 'Book'
+			stringAttr: String,
+			numberAttr: Number,
+			booleanAttr: Boolean,
+			objectAttr: Object,
+			arrayAttr: [ String ],
+			bookAttr: Book
 		};
 
 		class PrimitiveOnlyClass extends model.Class {
@@ -155,7 +148,7 @@ describe('Update', function() {
 
 	it('should create custom class from simple object', function() {
 		var attributes = {
-				bookAttr: 'Book'
+				bookAttr: Book
 			},
 			bookValues = {
 				title: 'Title',
@@ -198,7 +191,7 @@ describe('Update', function() {
 
 	it('should create two equal custom object if they have the same values', function() {
 		var attributes = {
-				otherBooks: 'Book[]'
+				otherBooks: [ Book ]
 			},
 			bookValues = {
 				title: 'Title',
@@ -226,19 +219,21 @@ describe('Update', function() {
 	it('should initialize attributes if their types defined with an Object, not a string', function() {
 		var attributes = {
 				title: {
-					type: 'String'
+					type: String
 				},
 				author: {
-					type: 'String'
+					type: String
 				},
 				tags: {
-					type: 'String[]'
+					type: String,
+					isArray: true
 				},
 				pages: {
-					type: 'Number'
+					type: Number
 				},
 				otherBooks: {
-					type: 'Book[]'
+					type: Book,
+					isArray: true
 				}
 			},
 			bookValues = {

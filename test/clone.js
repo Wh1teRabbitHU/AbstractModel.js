@@ -12,17 +12,17 @@ var describe   = mocha.describe,
 	beforeEach = mocha.beforeEach;
 
 const attributes = {
-	title: 'String',
-	authors: 'String[]',
-	tags: 'String[]',
-	emptyAttr: 'Object',
-	pages: 'Number',
+	title: String,
+	authors: [ String ],
+	tags: [ String ],
+	emptyAttr: Object,
+	pages: Number,
 	genre: {
-		type: 'String',
+		type: String,
 		values: [ 'sci-fi', 'action', 'noir' ]
 	},
-	books: 'Book[]',
-	isTooLongToRead: 'Boolean'
+	books: [ Book ],
+	isTooLongToRead: Boolean
 };
 
 var testEntity, testValues;
@@ -35,10 +35,6 @@ class TestClass extends model.Class {
 
 describe('Equals', function() {
 	before(function() {
-		model.init({
-			modelRoot: './test/models'
-		});
-
 		testValues = {
 			title: 'Test entity',
 			tags: [ 'a', 'b', 'c' ],
@@ -47,7 +43,6 @@ describe('Equals', function() {
 			genre: 'sci-fi',
 			books: [
 				new Book({
-					_class: 'NotABook',
 					title: 'Test book',
 					author: 'Test author',
 					pages: 366
@@ -80,11 +75,12 @@ describe('Equals', function() {
 	});
 
 	it('should not change if a subentity is changed in the original entity', function() {
-		var clone = testEntity.clone();
+		var clone = testEntity.clone(),
+			clone2 = clone.clone();
 
 		testEntity.books[0].title = 'Not a test book!';
 
-		assert.equal(clone.books[0].title, testValues.books[0].title);
+		assert.equal(clone.books[0].title, clone2.books[0].title);
 	});
 
 	it('should not change if an array is changed in the original entity', function() {

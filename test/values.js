@@ -3,20 +3,12 @@
 var assert = require('assert'),
 	mocha  = require('mocha');
 
-var model = require('../lib/abstract-model'),
-	Book  = require('./models/book');
+var Book  = require('./models/book');
 
 var describe = mocha.describe,
-	it       = mocha.it,
-	before   = mocha.before;
+	it       = mocha.it;
 
 describe('Values', function() {
-	before(function() {
-		model.init({
-			modelRoot: './test/models'
-		});
-	});
-
 	it('should only return with the predefined attribute\'s values', function() {
 		var bookValues = {
 			title: 'Title',
@@ -29,7 +21,6 @@ describe('Values', function() {
 		var book = new Book(bookValues),
 			values = book.values;
 
-		assert.equal(typeof values._class, 'undefined');
 		assert.equal(typeof values._attributes, 'undefined');
 		assert.equal(typeof values._errors, 'undefined');
 		assert.equal(typeof values.iAmAStranger, 'undefined');
@@ -70,7 +61,6 @@ describe('Values', function() {
 				pages: 455
 			},
 			valuesB = {
-				_class: 'IAmNotABook',
 				_attributes: {},
 				title: 'I am also a title',
 				tags: [ 'test_tag3', 'test_tag4' ]
@@ -83,7 +73,6 @@ describe('Values', function() {
 
 		otherBook.values = valuesA;
 
-		assert.equal(book._class, otherBook._class);
 		assert.deepEqual(book._attributes, otherBook._attributes);
 		assert.deepEqual(book.tags, valuesB.tags);
 		assert.equal(book.title, valuesB.title);
