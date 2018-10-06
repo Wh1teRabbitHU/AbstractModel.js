@@ -32,6 +32,23 @@ describe('Constructor', function() {
 		});
 	});
 
+	it('should always set the \'_class\' attribute either it provided or not', function() {
+		let otherBookClass = 'DifferentBookClass',
+			book = new Book();
+
+		assert.equal(book._class, 'Book');
+
+		class OtherBook extends model.Class {
+			constructor(values) {
+				super(Object.assign({ _class: otherBookClass }, book._attributes), values);
+			}
+		}
+
+		var otherBook = new OtherBook();
+
+		assert.equal(otherBook._class, otherBookClass);
+	});
+
 	it('should initialize the class with the given values', function() {
 		var values = {
 				title: 'Test book',
