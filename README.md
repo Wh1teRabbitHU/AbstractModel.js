@@ -324,7 +324,7 @@ class AllTypeClass extends model.Class {
 ### <a id="constructor"></a> Constructor
 
 What's the constructor's job?
-It sets your predefined attributes to the class, initialize with the given values (if nothing is added, then skipping this part) and validate them.
+It sets your predefined attributes to the class, initialize with the given values (if nothing is added, then skipping this part) and validate them. The constructor also set the '_class' attribute whenever you provide it or not. You should define this attribute inside the other attributes object. If you didn't add any specific value, the default will be the classes name.
 
 ```javascript
 const Book = require('./models/book');
@@ -499,6 +499,13 @@ console.log(book.title); // It's still 'New book', no matter what you are going 
 Check local-store.js under the example folder. Later I'll make an interactive page to play with the data.
 
 ## <a id="changelogs"></a> Changelogs
+
+### 1.0.1
+
+- Adding '_class' attribute initializer to the constructor. If the '_class' attribute not provided with the other attributes, then the constructor will set as the classes name.
+- Adding travis support
+- Adding README badges
+- Fixing npm vulnerabilities
 
 ### 1.0.0
 
