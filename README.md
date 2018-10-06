@@ -505,6 +505,7 @@ Check local-store.js under the example folder. Later I'll make an interactive pa
 - Adding '_class' attribute initializer to the constructor. If the '_class' attribute not provided with the other attributes, then the constructor will set as the classes name.
 - Adding travis support
 - Adding README badges
+- Fixing npm vulnerabilities
 
 ### 1.0.0
 
